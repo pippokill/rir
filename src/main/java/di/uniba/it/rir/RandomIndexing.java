@@ -473,7 +473,6 @@ public class RandomIndexing {
             }
             writer.close();
         } else {
-
             VectorStoreUtils.saveSpace(outputfile, semanticSpace, VectorType.REAL, dimension, seed);
         }
         if (saveRandom) {

@@ -102,8 +102,10 @@ public class VectorStoreUtils {
         String header = VectorStoreUtils.createHeader(VectorType.REAL, dimension, seed);
         outputStream.writeUTF(header);
         for (Entry<String, Vector> entry : vectors.entrySet()) {
-            outputStream.writeUTF(entry.getKey());
-            entry.getValue().writeToStream(outputStream);
+            if (!entry.getValue().isZeroVector()) {
+                outputStream.writeUTF(entry.getKey());
+                entry.getValue().writeToStream(outputStream);
+            }
         }
         outputStream.close();
     }
