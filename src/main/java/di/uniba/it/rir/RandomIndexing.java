@@ -463,6 +463,7 @@ public class RandomIndexing {
             for (String key : keySet) {
                 Vector v = semanticSpace.get(key);
                 if (!v.isZeroVector()) {
+                    v.normalize();
                     writer.append(key);
                     float[] coordinates = ((RealVector) v).getCoordinates();
                     for (float c : coordinates) {
@@ -483,6 +484,7 @@ public class RandomIndexing {
                 for (String key : keySet) {
                     Vector v = semanticSpace.get(key);
                     if (!v.isZeroVector()) {
+                        v.normalize();
                         writer.append(key);
                         float[] coordinates = ((RealVector) v).getCoordinates();
                         for (float c : coordinates) {

@@ -103,6 +103,7 @@ public class VectorStoreUtils {
         outputStream.writeUTF(header);
         for (Entry<String, Vector> entry : vectors.entrySet()) {
             if (!entry.getValue().isZeroVector()) {
+                entry.getValue().normalize();
                 outputStream.writeUTF(entry.getKey());
                 entry.getValue().writeToStream(outputStream);
             }
