@@ -97,6 +97,7 @@ public class RealVectorUtils {
             if (kthVector.getVectorType() != VectorType.REAL) {
                 throw new IncompatibleVectorsException();
             }
+            kthVector.normalize();
             if (kthVector.getDimension() != dimension) {
                 logger.warning("In orthogonalizeVector: not all vectors have required dimension.");
                 return false;
