@@ -461,12 +461,15 @@ public class RandomIndexing {
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputfile));
             Set<String> keySet = semanticSpace.keySet();
             for (String key : keySet) {
-                writer.append(key);
-                float[] coordinates = ((RealVector) semanticSpace.get(key)).getCoordinates();
-                for (float v : coordinates) {
-                    writer.append(" ").append(String.valueOf(v));
+                Vector v = semanticSpace.get(key);
+                if (!v.isZeroVector()) {
+                    writer.append(key);
+                    float[] coordinates = ((RealVector) v).getCoordinates();
+                    for (float c : coordinates) {
+                        writer.append(" ").append(String.valueOf(c));
+                    }
+                    writer.newLine();
                 }
-                writer.newLine();
             }
             writer.close();
         } else {
@@ -479,12 +482,15 @@ public class RandomIndexing {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputfile));
                 Set<String> keySet = elementalSpace.keySet();
                 for (String key : keySet) {
-                    writer.append(key);
-                    float[] coordinates = ((RealVector) elementalSpace.get(key)).getCoordinates();
-                    for (float v : coordinates) {
-                        writer.append(" ").append(String.valueOf(v));
+                    Vector v = semanticSpace.get(key);
+                    if (!v.isZeroVector()) {
+                        writer.append(key);
+                        float[] coordinates = ((RealVector) v).getCoordinates();
+                        for (float c : coordinates) {
+                            writer.append(" ").append(String.valueOf(c));
+                        }
+                        writer.newLine();
                     }
-                    writer.newLine();
                 }
                 writer.close();
             } else {
