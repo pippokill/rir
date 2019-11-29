@@ -111,6 +111,20 @@ public class VectorUtils {
                 throw new IncompatibleVectorsException("Type not recognized: " + list.get(0).getVectorType());
         }
     }
+    
+    public static void orthogonalizeVectorsNotNormalized(List<Vector> list) {
+        switch (list.get(0).getVectorType()) {
+            case REAL:
+                RealVectorUtils.orthogonalizeVectorsNotNormalized(list);
+                break;
+
+    //case BINARY:
+            // BinaryVectorUtils.orthogonalizeVectors(list);
+            // break;
+            default:
+                throw new IncompatibleVectorsException("Type not recognized: " + list.get(0).getVectorType());
+        }
+    }
 
     /**
      * Returns a superposition of the form leftWeight*left + rightWeight*right.

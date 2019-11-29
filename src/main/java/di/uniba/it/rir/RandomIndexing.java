@@ -449,7 +449,7 @@ public class RandomIndexing {
                             List<Vector> lv = new ArrayList<>();
                             lv.add(nw);
                             lv.add(sv);
-                            VectorUtils.orthogonalizeVectors(lv);
+                            VectorUtils.orthogonalizeVectorsNotNormalized(lv);
                             k++;
                         }
                     }

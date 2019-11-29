@@ -71,9 +71,7 @@ public class RealVectorUtils {
             if (kthVector.getVectorType() != VectorType.REAL) {
                 throw new IncompatibleVectorsException();
             }
-            if (!kthVector.isZeroVector()) {
-                kthVector.normalize();
-            }
+            kthVector.normalize();
             if (kthVector.getDimension() != dimension) {
                 logger.warning("In orthogonalizeVector: not all vectors have required dimension.");
                 return false;
@@ -85,9 +83,30 @@ public class RealVectorUtils {
                 // Subtract relevant amount from kth vector.
                 kthVector.superpose(jthVector, -dotProduct, null);
                 // And renormalize each time.
-                if (!kthVector.isZeroVector()) {
-                    kthVector.normalize();
-                }
+                kthVector.normalize();
+            }
+        }
+        return true;
+    }
+
+    public static boolean orthogonalizeVectorsNotNormalized(List<Vector> list) {
+        int dimension = list.get(0).getDimension();
+        // Go up through vectors in turn, parameterized by k.
+        for (int k = 0; k < list.size(); ++k) {
+            Vector kthVector = list.get(k);
+            if (kthVector.getVectorType() != VectorType.REAL) {
+                throw new IncompatibleVectorsException();
+            }
+            if (kthVector.getDimension() != dimension) {
+                logger.warning("In orthogonalizeVector: not all vectors have required dimension.");
+                return false;
+            }
+            // Go up to vector k, parameterized by j.
+            for (int j = 0; j < k; ++j) {
+                Vector jthVector = list.get(j);
+                double dotProduct = kthVector.measureOverlap(jthVector);
+                // Subtract relevant amount from kth vector.
+                kthVector.superpose(jthVector, -dotProduct, null);
             }
         }
         return true;
