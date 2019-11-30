@@ -104,10 +104,12 @@ public class RealVectorUtils {
             // Go up to vector k, parameterized by j.
             for (int j = 0; j < k; ++j) {
                 Vector jthVector = list.get(j).copy();
-                jthVector.normalize();
-                double dotProduct = kthVector.measureOverlap(jthVector);
-                // Subtract relevant amount from kth vector.
-                kthVector.superpose(jthVector, -dotProduct, null);
+                if(!jthVector.isZeroVector()) {
+                	jthVector.normalize();
+                	double dotProduct = kthVector.measureOverlap(jthVector);
+                	// Subtract relevant amount from kth vector.
+                	kthVector.superpose(jthVector, -dotProduct, null);
+                }
             }
         }
         return true;
