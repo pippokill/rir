@@ -97,14 +97,14 @@ public class RealVectorUtils {
             if (kthVector.getVectorType() != VectorType.REAL) {
                 throw new IncompatibleVectorsException();
             }
-            kthVector.normalize();
             if (kthVector.getDimension() != dimension) {
                 logger.warning("In orthogonalizeVector: not all vectors have required dimension.");
                 return false;
             }
             // Go up to vector k, parameterized by j.
             for (int j = 0; j < k; ++j) {
-                Vector jthVector = list.get(j);
+                Vector jthVector = list.get(j).copy();
+                jthVector.normalize();
                 double dotProduct = kthVector.measureOverlap(jthVector);
                 // Subtract relevant amount from kth vector.
                 kthVector.superpose(jthVector, -dotProduct, null);
