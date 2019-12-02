@@ -42,13 +42,10 @@ import di.uniba.it.vectors.VectorType;
 import di.uniba.it.vectors.VectorUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -293,10 +290,18 @@ public class RandomIndexing {
         this.windowSize = windowSize;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isUseStandardAnalyzer() {
         return useStandardAnalyzer;
     }
 
+    /**
+     *
+     * @param useStandardAnalyzer
+     */
     public void setUseStandardAnalyzer(boolean useStandardAnalyzer) {
         this.useStandardAnalyzer = useStandardAnalyzer;
     }
