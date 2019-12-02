@@ -42,10 +42,13 @@ import di.uniba.it.vectors.VectorType;
 import di.uniba.it.vectors.VectorUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -473,10 +476,20 @@ public class RandomIndexing {
         }
         reader.close();
         if (ns > 0) {
-            LOG.log(Level.INFO, "Performing negative sampling...");
+            LOG.log(Level.INFO, "Performing negative sampling and saving...");
+            BufferedWriter writer = null;
+            DataOutputStream outputStream = null;
+            if (txtFormat) {
+                writer = new BufferedWriter(new FileWriter(outputfile));
+            } else {
+                outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputfile)));
+                String header = VectorStoreUtils.createHeader(VectorType.REAL, dimension, seed);
+                outputStream.writeUTF(header);
+            }
             for (String word : dictArray) {
                 Vector sv = semanticSpace.get(word);
                 if (sv != null) {
+                    Vector copy = sv.copy(); // it is necessary to copy the vector because orthogonalization modifies vector in place
                     int k = 0;
                     while (k < ns) {
                         int idx = random.nextInt(na.length);
@@ -484,34 +497,51 @@ public class RandomIndexing {
                         if (!negword.equals(word)) {
                             Vector nw = semanticSpace.get(negword);
                             List<Vector> lv = new ArrayList<>();
-                            lv.add(nw);
-                            lv.add(sv);
-                            VectorUtils.orthogonalizeVectors(lv);
+                            lv.add(nw.copy()); // it is necessary to copy the vector because orthogonalization modifies vector in place
+                            lv.add(copy);
+                            VectorUtils.orthogonalizeVectors(lv); 
                             k++;
                         }
                     }
-                }
-            }
-        }
-        LOG.log(Level.INFO, "Saving vectors in dir: {0}", outputfile.getAbsolutePath());
-        if (txtFormat) {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(outputfile));
-            Set<String> keySet = semanticSpace.keySet();
-            for (String key : keySet) {
-                Vector v = semanticSpace.get(key);
-                if (!v.isZeroVector()) {
-                    v.normalize();
-                    writer.append(key);
-                    float[] coordinates = ((RealVector) v).getCoordinates();
-                    for (float c : coordinates) {
-                        writer.append(" ").append(String.valueOf(c));
+                    if (txtFormat) {
+                        writer.append(word);
+                        float[] coordinates = ((RealVector) copy).getCoordinates();
+                        for (float c : coordinates) {
+                            writer.append(" ").append(String.valueOf(c));
+                        }
+                        writer.newLine();
+                    } else {
+                        outputStream.writeUTF(word);
+                        copy.writeToStream(outputStream);
                     }
-                    writer.newLine();
                 }
             }
-            writer.close();
+            if (txtFormat) {
+                writer.close();
+            } else {
+                outputStream.close();
+            }
         } else {
-            VectorStoreUtils.saveSpace(outputfile, semanticSpace, VectorType.REAL, dimension, seed);
+            LOG.log(Level.INFO, "Saving vectors in dir: {0}", outputfile.getAbsolutePath());
+            if (txtFormat) {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(outputfile));
+                Set<String> keySet = semanticSpace.keySet();
+                for (String key : keySet) {
+                    Vector v = semanticSpace.get(key);
+                    if (!v.isZeroVector()) {
+                        v.normalize();
+                        writer.append(key);
+                        float[] coordinates = ((RealVector) v).getCoordinates();
+                        for (float c : coordinates) {
+                            writer.append(" ").append(String.valueOf(c));
+                        }
+                        writer.newLine();
+                    }
+                }
+                writer.close();
+            } else {
+                VectorStoreUtils.saveSpace(outputfile, semanticSpace, VectorType.REAL, dimension, seed);
+            }
         }
         if (saveRandom) {
             LOG.log(Level.INFO, "Saving random vectors in dir: {0}", outputfile.getAbsolutePath());
