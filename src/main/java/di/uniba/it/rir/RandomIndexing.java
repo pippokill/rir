@@ -361,8 +361,8 @@ public class RandomIndexing {
                     context.add(tokens.get(i));
                     a++;
                 }
-                i--;
             }
+            i--;
         }
         i = offset + 1;
         a = 0;
