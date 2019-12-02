@@ -328,6 +328,7 @@ public class RandomIndexing {
                 Utils.stopwordFilter(tokens, stopword);
             }
             for (String token : tokens) {
+                totalOcc++;
                 Integer c = dict.get(token);
                 if (c == null) {
                     dict.put(token, 1);
@@ -388,6 +389,7 @@ public class RandomIndexing {
      */
     public void run(File inputfile, File outputfile) throws IOException {
         LOG.log(Level.INFO, "Min count {0}", minCount);
+        totalOcc = 0;
         Map<String, Integer> dict = buildDictionary(inputfile);
         LOG.log(Level.INFO, "Dictionary size {0}", dict.size());
         LOG.log(Level.INFO, "Negative sampling: {0}", ns);
@@ -395,13 +397,10 @@ public class RandomIndexing {
         Map<String, Vector> semanticSpace = new Object2ObjectOpenHashMap<>();
         //create random vectors space
         LOG.info("Building vectors...");
-        totalOcc = 0;
         Random random = new Random(randomSeed);
         for (String word : dict.keySet()) {
             elementalSpace.put(word, VectorFactory.generateRandomVector(VectorType.REAL, dimension, seed, random));
             semanticSpace.put(word, VectorFactory.createZeroVector(VectorType.REAL, dimension));
-            //compute total occurrences taking into account the dictionary
-            totalOcc += dict.get(word);
         }
         //init negative sample
         String[] dictArray = null;
