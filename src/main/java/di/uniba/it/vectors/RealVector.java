@@ -90,7 +90,8 @@ public class RealVector implements Vector {
 
     /**
      * Returns {@link VectorType#REAL}
-     * @return 
+     *
+     * @return
      */
     public VectorType getVectorType() {
         return VectorType.REAL;
@@ -121,7 +122,8 @@ public class RealVector implements Vector {
 
     /**
      * Returns a new copy of this vector, in dense format.
-     * @return 
+     *
+     * @return
      */
     public RealVector copy() {
         if (isSparse) {
@@ -389,6 +391,7 @@ public class RealVector implements Vector {
 
     /**
      * Implements release using {@link RealVectorUtils#fftApproxInvConvolution}
+     *
      * @param other
      */
     public void releaseWithConvolution(RealVector other) {
@@ -399,6 +402,7 @@ public class RealVector implements Vector {
     /**
      * Implements binding as a single-shift permutation. Currently wasteful;
      * allocates the permutation array each time.
+     *
      * @param other
      */
     public void bindWithPermutation(RealVector other) {
@@ -412,6 +416,7 @@ public class RealVector implements Vector {
 
     /**
      * Implements release using the {@link #bindWithPermutation}.
+     *
      * @param other
      */
     public void releaseWithPermutation(RealVector other) {
@@ -429,6 +434,9 @@ public class RealVector implements Vector {
      * process.
      */
     public void normalize() {
+        if (isZeroVector()) {
+            return;
+        }
         if (this.isSparse) {
             this.sparseToDense();
         }
@@ -554,7 +562,8 @@ public class RealVector implements Vector {
     /**
      * Available to support access to coordinates for legacy operations. Try not
      * to use in new code!
-     * @return 
+     *
+     * @return
      */
     public float[] getCoordinates() {
         if (isSparse) {
@@ -568,6 +577,7 @@ public class RealVector implements Vector {
 
     /**
      * Available for testing and copying. Try not to use in new code!
+     *
      * @param coordinates
      */
     public RealVector(float[] coordinates) {
@@ -577,6 +587,7 @@ public class RealVector implements Vector {
 
     /**
      * Available for testing and copying. Try not to use in new code!
+     *
      * @param dimension
      * @param sparseOffsets
      */

@@ -103,6 +103,37 @@ public class Utils {
 
     /**
      *
+     * @param reader
+     * @param analyzer
+     * @return
+     * @throws IOException
+     */
+    public static List<String> getTokens(Reader reader, Analyzer analyzer) throws IOException {
+        List<String> tokens = new ArrayList<>();
+        TokenStream tokenStream = analyzer.tokenStream("text", reader);
+        tokenStream.reset();
+        CharTermAttribute cattr = tokenStream.addAttribute(CharTermAttribute.class);
+        while (tokenStream.incrementToken()) {
+            String token = cattr.toString();
+            tokens.add(token);
+        }
+        tokenStream.end();
+        return tokens;
+    }
+
+    /**
+     *
+     * @param text
+     * @param analyzer
+     * @return
+     * @throws IOException
+     */
+    public static List<String> getTokens(String text, Analyzer analyzer) throws IOException {
+        return getTokens(new StringReader(text), analyzer);
+    }
+
+    /**
+     *
      * @param tokens
      */
     public static void letterfilter(List<String> tokens) {

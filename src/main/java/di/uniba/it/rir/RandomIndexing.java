@@ -97,6 +97,10 @@ public class RandomIndexing {
 
     private int windowSize = 5;
 
+    private boolean useStandardAnalyzer = false;
+
+    private Random rndDownsample;
+
     /**
      *
      */
@@ -289,6 +293,14 @@ public class RandomIndexing {
         this.windowSize = windowSize;
     }
 
+    public boolean isUseStandardAnalyzer() {
+        return useStandardAnalyzer;
+    }
+
+    public void setUseStandardAnalyzer(boolean useStandardAnalyzer) {
+        this.useStandardAnalyzer = useStandardAnalyzer;
+    }
+
     private Map<String, Integer> buildDictionary(File inputfile) throws IOException {
         LOG.log(Level.INFO, "Building dictionary: {0}", inputfile.getAbsolutePath());
         Set<String> stopword = null;
@@ -303,7 +315,12 @@ public class RandomIndexing {
             reader = new BufferedReader(new FileReader(inputfile));
         }
         while (reader.ready()) {
-            List<String> tokens = Utils.getTokens(reader.readLine());
+            List<String> tokens;
+            if (useStandardAnalyzer) {
+                tokens = Utils.getTokens(reader.readLine());
+            } else {
+                tokens = Utils.getTokens(reader.readLine(), new MyAnalyzer());
+            }
             if (letterFilter) {
                 Utils.letterfilter(tokens);
             }
@@ -330,22 +347,33 @@ public class RandomIndexing {
     }
 
     private List<String> getContext(List<String> tokens, int offset, Map<String, Integer> dict) {
+        if (rndDownsample == null) {
+            rndDownsample = new Random(randomSeed);
+        }
         List<String> context = new ArrayList<>();
         int i = offset - 1;
         int a = 0;
         while (i >= 0 && a < windowSize) {
             if (dict.containsKey(tokens.get(i))) {
-                context.add(tokens.get(i));
-                a++;
+                double f = dict.get(tokens.get(i)).doubleValue();
+                double p = (Math.sqrt(f / (t * totalOcc)) + 1) * (t * totalOcc) / f;
+                if (rndDownsample.nextDouble() > p) {
+                    context.add(tokens.get(i));
+                    a++;
+                }
+                i--;
             }
-            i--;
         }
         i = offset + 1;
         a = 0;
         while (i < tokens.size() && a < windowSize) {
             if (dict.containsKey(tokens.get(i))) {
-                context.add(tokens.get(i));
-                a++;
+                double f = dict.get(tokens.get(i)).doubleValue();
+                double p = (Math.sqrt(f / (t * totalOcc)) + 1) * (t * totalOcc) / f;
+                if (rndDownsample.nextDouble() > p) {
+                    context.add(tokens.get(i));
+                    a++;
+                }
             }
             i++;
         }
@@ -409,7 +437,12 @@ public class RandomIndexing {
             reader = new BufferedReader(new FileReader(inputfile));
         }
         while (reader.ready()) {
-            List<String> tokens = Utils.getTokens(reader.readLine());
+            List<String> tokens;
+            if (useStandardAnalyzer) {
+                tokens = Utils.getTokens(reader.readLine());
+            } else {
+                tokens = Utils.getTokens(reader.readLine(), new MyAnalyzer());
+            }
             if (letterFilter) {
                 Utils.letterfilter(tokens);
             }
@@ -423,12 +456,12 @@ public class RandomIndexing {
                     for (String cw : context) {
                         Vector ev = elementalSpace.get(cw);
                         if (ev != null) {
-                            double f = dict.get(cw).doubleValue() / (double) totalOcc; //downsampling
+                            /*double f = dict.get(cw).doubleValue() / (double) totalOcc; //downsampling
                             double p = 1;
                             if (f > t) { //if word frequency is greater than the threshold, compute the probability of consider the word 
                                 p = Math.sqrt(t / f);
-                            }
-                            v.superpose(ev, p, null);
+                            }*/
+                            v.superpose(ev, 1, null);
                         }
                     }
                 }
@@ -449,7 +482,7 @@ public class RandomIndexing {
                             List<Vector> lv = new ArrayList<>();
                             lv.add(nw);
                             lv.add(sv);
-                            VectorUtils.orthogonalizeVectorsNotNormalized(lv);
+                            VectorUtils.orthogonalizeVectors(lv);
                             k++;
                         }
                     }

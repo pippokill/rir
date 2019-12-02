@@ -10,7 +10,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xmx8G -classpath %classpath di.uniba.it.rir.cli.RI -i /home/pierpaolo/data/BNC/BNC_plain_text_corpus.gz -o /home/pierpaolo/data/BNC/tri/revri/vectors_20.txt -txt -c 10 -t 0.0001 -ns 20</exec.args>
+                <exec.args>-Xmx8G -classpath %classpath di.uniba.it.rir.cli.RI -i /home/pierpaolo/data/BNC/BNC_plain_text_corpus.gz -o /home/pierpaolo/data/BNC/tri/revri/vectors_new_20.txt -txt -c 10 -t 0.0001 -ns 20</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -24,7 +24,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Xmx8G -classpath %classpath di.uniba.it.rir.cli.RI -i /home/pierpaolo/data/BNC/BNC_plain_text_corpus.gz -o /home/pierpaolo/data/BNC/tri/revri/vectors_20.txt -txt -c 10 -t 0.0001 -ns 20</exec.args>
+                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Xmx8G -classpath %classpath di.uniba.it.rir.cli.RI -i /home/pierpaolo/data/BNC/BNC_plain_text_corpus.gz -o /home/pierpaolo/data/BNC/tri/revri/vectors_new_20.txt -txt -c 10 -t 0.0001 -ns 20</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
@@ -39,7 +39,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xmx8G -classpath %classpath di.uniba.it.rir.cli.RI -i /home/pierpaolo/data/BNC/BNC_plain_text_corpus.gz -o /home/pierpaolo/data/BNC/tri/revri/vectors_20.txt -txt -c 10 -t 0.0001 -ns 20</exec.args>
+                <exec.args>-Xmx8G -classpath %classpath di.uniba.it.rir.cli.RI -i /home/pierpaolo/data/BNC/BNC_plain_text_corpus.gz -o /home/pierpaolo/data/BNC/tri/revri/vectors_new_20.txt -txt -c 10 -t 0.0001 -ns 20</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>

@@ -39,7 +39,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -73,7 +72,8 @@ public class RI {
                 .addOption("seed", true, "The number of seeds (optional, default 10)")
                 .addOption("c", true, "This will discard words that appear less than <n> times; default is 5")
                 .addOption("t", true, "Threshold for downsampling frequent words (optinal, default 0.001)")
-                .addOption("ns", true, "Number of negative samples (optinal, default 0)");
+                .addOption("ns", true, "Number of negative samples (optinal, default 0)")
+                .addOption("st", false, "Use standard analyzer (default false)");
     }
 
     /**
@@ -95,6 +95,7 @@ public class RI {
                     ri.setSaveRandom(cmd.hasOption("ri"));
                     ri.setTxtFormat(cmd.hasOption("txt"));
                     ri.setWindowSize(Integer.parseInt(cmd.getOptionValue("w", "5")));
+                    ri.setUseStandardAnalyzer(cmd.hasOption("st"));
                     if (cmd.hasOption("rseed")) {
                         ri.setRandomSeed(Long.parseLong(cmd.getOptionValue("rseed")));
                     }
