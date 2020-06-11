@@ -489,30 +489,51 @@ public class RandomIndexing {
             for (String word : dictArray) {
                 Vector sv = semanticSpace.get(word);
                 if (sv != null) {
-                    Vector copy = sv.copy(); // it is necessary to copy the vector because orthogonalization modifies vector in place
+                    //Vector copy = sv.copy(); // it is necessary to copy the vector because orthogonalization modifies vector in place
                     int k = 0;
+                    //List<Vector> lv = new ArrayList<>();
                     while (k < ns) {
                         int idx = random.nextInt(na.length);
                         String negword = dictArray[na[idx]];
                         if (!negword.equals(word)) {
                             Vector nw = semanticSpace.get(negword);
                             List<Vector> lv = new ArrayList<>();
-                            lv.add(nw.copy()); // it is necessary to copy the vector because orthogonalization modifies vector in place
-                            lv.add(copy);
-                            VectorUtils.orthogonalizeVectors(lv); 
+                            //lv.add(nw.copy()); // it is necessary to copy the vector because orthogonalization modifies vector in place
+                            lv.add(nw);
+                            lv.add(sv);
+                            VectorUtils.orthogonalizeVectors(lv);
                             k++;
                         }
                     }
-                    if (txtFormat) {
+                    //lv.add(copy);
+                    //VectorUtils.orthogonalizeVectors(lv);
+                    /*if (txtFormat) {
                         writer.append(word);
-                        float[] coordinates = ((RealVector) copy).getCoordinates();
+                        float[] coordinates = ((RealVector) lv.get(lv.size() - 1)).getCoordinates();
                         for (float c : coordinates) {
                             writer.append(" ").append(String.valueOf(c));
                         }
                         writer.newLine();
                     } else {
                         outputStream.writeUTF(word);
-                        copy.writeToStream(outputStream);
+                        lv.get(lv.size() - 1).writeToStream(outputStream);
+                    }*/
+                }
+            }
+            for (String word : dictArray) {
+                Vector sv = semanticSpace.get(word);
+                if (sv != null) {
+                    sv.normalize();
+                    if (txtFormat) {
+                        writer.append(word);
+                        float[] coordinates = ((RealVector) sv).getCoordinates();
+                        for (float c : coordinates) {
+                            writer.append(" ").append(String.valueOf(c));
+                        }
+                        writer.newLine();
+                    } else {
+                        outputStream.writeUTF(word);
+                        sv.writeToStream(outputStream);
                     }
                 }
             }
