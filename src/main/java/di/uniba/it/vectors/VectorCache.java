@@ -51,7 +51,8 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.FieldInfo;
+import org.apache.lucene.index.DocValuesType;
+import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
@@ -60,7 +61,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
 
 /**
  *
@@ -95,15 +95,15 @@ public class VectorCache {
                 .maximumSize(this.cacheSize)
                 .build(
                         new CacheLoader<String, Vector>() {
-                            @Override
-                            public Vector load(String key) throws IOException {
-                                return getVectorFromIndex(key);
-                            }
+                    @Override
+                    public Vector load(String key) throws IOException {
+                        return getVectorFromIndex(key);
+                    }
 
-                        });
-        IndexWriterConfig iwc = new IndexWriterConfig(Version.LATEST, new KeywordAnalyzer());
-        writer = new IndexWriter(FSDirectory.open(new File("./VC_" + ID)), iwc);
-        dirReader = DirectoryReader.open(writer, true);
+                });
+        IndexWriterConfig iwc = new IndexWriterConfig(new KeywordAnalyzer());
+        writer = new IndexWriter(FSDirectory.open(new File("./VC_" + ID).toPath()), iwc);
+        dirReader = DirectoryReader.open(writer, true, true);
         searcher = new IndexSearcher(dirReader);
     }
 
@@ -128,8 +128,8 @@ public class VectorCache {
 
     private Field getBinaryField(String name, byte[] bytes) {
         FieldType binType = new FieldType();
-        binType.setDocValueType(FieldInfo.DocValuesType.BINARY);
-        binType.setIndexOptions(FieldInfo.IndexOptions.DOCS_ONLY);
+        binType.setDocValuesType(DocValuesType.BINARY);
+        binType.setIndexOptions(IndexOptions.DOCS);
         binType.setStoreTermVectorOffsets(false);
         binType.setStoreTermVectorPayloads(false);
         binType.setStoreTermVectorPositions(false);
